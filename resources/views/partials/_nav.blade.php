@@ -1,7 +1,14 @@
 <nav>
-    <a href="{{ route('books.index') }}">Books</a>
+    <a href="{{ route('books.index') }}"
+       class="{{ request()->is('books*') ? 'active fw-bold text-primary' : '' }}">
+        Books
+    </a>
+
     |
-    <a href="{{ route('books.show', 1) }}">Book 1</a>
+
+    <a href="{{ route('books.show', 1) }}">
+        Book 1
+    </a>
 </nav>
 
 <hr>

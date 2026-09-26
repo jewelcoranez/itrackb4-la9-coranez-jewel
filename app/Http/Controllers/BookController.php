@@ -1,57 +1,110 @@
-<?php  
-  
-namespace App\Http\Controllers;  
-  
-class BookController extends Controller  
-{  
-    private function books()  
-    {  
-        return [  
-            1 => ['id' => 1, 'title' => 'The Alchemist', 'author' => 'Paulo Coelho', 'genre' => 'Fiction', 'year' => 1988],  
-            2 => ['id' => 2, 'title' => 'Harry Potter and the Sorcerer\'s Stone', 'author' => 'J.K. Rowling', 'genre' => 'Fantasy', 'year' => 1997],  
-            3 => ['id' => 3, 'title' => 'The Hobbit', 'author' => 'J.R.R. Tolkien', 'genre' => 'Fantasy', 'year' => 1937],  
-            4 => ['id' => 4, 'title' => 'The Little Prince', 'author' => 'Antoine de Saint-Exupéry', 'genre' => 'Fiction', 'year' => 1943],  
-            5 => ['id' => 5, 'title' => 'Pride and Prejudice', 'author' => 'Jane Austen', 'genre' => 'Romance', 'year' => 1813],  
-            6 => ['id' => 6, 'title' => '1984', 'author' => 'George Orwell', 'genre' => 'Dystopian', 'year' => 1949],  
-            7 => ['id' => 7, 'title' => 'The Great Gatsby', 'author' => 'F. Scott Fitzgerald', 'genre' => 'Fiction', 'year' => 1925],  
-        ];  
-    }  
-  
-    public function index()  
-    {  
-        $books = $this->books();  
-  
-        return view('books.index', ['books' => $books]);  
-    }  
-  
-    public function show($id)  
-    {  
-        $books = $this->books();  
-  
-        if (!isset($books[$id])) {  
-            abort(404);  
-        }  
-  
-        $book = $books[$id];  
-  
-        return view('books.show', ['book' => $book]);  
-    }  
-  
-    public function filter($genre = null)  
-    {  
-        $books = $this->books();  
-        $filteredBooks = [];  
-  
-        if ($genre == null) {  
-            $filteredBooks = $books;  
-        } else {  
-            foreach ($books as $book) {  
-                if ($book['genre'] == $genre) {  
-                    $filteredBooks[] = $book;  
-                }  
-            }  
-        }  
-  
-        return view('books.filter', ['books' => $filteredBooks, 'genre' => $genre]);  
-    }  
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class BookController extends Controller
+{
+
+    public function create()
+    {
+        //
+    }
+
+    public function store(Request $request)
+    {
+        //
+    }
+
+    public function show(string $id)
+    {
+        $books = $this->books();
+
+        $book = collect($books)->firstWhere('id', (int) $id);
+
+        if (!$book) {
+            abort(404);
+        }
+
+        return view('books.show', compact('book'));
+    }
+
+    public function edit(string $id)
+    {
+        //
+    }
+
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    public function destroy(string $id)
+    {
+        //
+    }
+
+    public function index(Request $request)
+{
+    $genre = $request->query('genre', '');
+    $rating = $request->query('rating', '');
+
+    $books = collect($this->books())
+        ->when($genre !== '', function ($books) use ($genre) {
+            return $books->where('genre', $genre);
+        })
+        ->when($rating !== '', function ($books) use ($rating) {
+            return $books->where('rating', (float) $rating);
+        })
+        ->values();
+
+    return view('books.index', compact(
+        'books',
+        'genre',
+        'rating'
+    ));
+}
+
+    private function books()
+    {
+        return [
+            [
+                'id' => 1,
+                'title' => 'The Alchemist',
+                'genre' => 'Adventure',
+                'rating' => 5.0,
+            ],
+            [
+                'id' => 2,
+                'title' => 'Harry Potter',
+                'genre' => 'Fantasy',
+                'rating' => 9.9,
+            ],
+            [
+                'id' => 3,
+                'title' => 'The Hobbit',
+                'genre' => 'Fantasy',
+                'rating' => 8.7,
+            ],
+            [
+                'id' => 4,
+                'title' => 'The Little Prince',
+                'genre' => 'Classic',
+                'rating' => 9.6,
+            ],
+            [
+                'id' => 5,
+                'title' => 'Pride and Prejudice',
+                'genre' => 'Romance',
+                'rating' => 8.8,
+            ],
+            [
+                'id' => 6,
+                'title' => 'To Kill a Mockingbird',
+                'genre' => 'Drama',
+                'rating' => 6.7,
+            ],
+        ];
+    }
 }
