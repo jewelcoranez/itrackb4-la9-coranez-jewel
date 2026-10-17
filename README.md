@@ -1,17 +1,13 @@
-# LA6 – Two Filters, One Route
+# LA9 – Your Own Table, Your Own Model
 
-## Q1. Why was no new route needed?
+### F1. Which column did you make nullable, and why that one and not another?
 
-I did not need to add another route because both filters use the same books list route. Laravel's router checks the URL path and HTTP method, not the query string values. My index method reads the genre and rating using the Request object. This allows both filters to work together without adding another route.
+I made the `author` column nullable because some books may not have a recorded author. I kept `title`, `pages`, and `is_available` required because they are important information for each book in my library.
 
-## Q2. What if both filters used route parameters?
+### F2. Which step failed first for you, and what did the error say?
 
-If I used route parameters, I could make a URL like `/books/none/4` for year 4 without a course filter. I would need to use `none` as a placeholder because route parameters are part of the URL path. The route would need to account for the missing course value. Query strings are more flexible because I can leave one filter out.
+My seeder first failed because of a namespace declaration error in `BookSeeder.php`. The error said that the namespace declaration had to be the very first statement or after any declare statement, so I fixed the file and checked it again.
 
-## Q3. Why does the navigation stay active?
+### F3. You changed no Blade file in Part D, yet your pages still work. Why not?
 
-I changed the navigation pattern to `books*` so it matches both the books list and detail pages. The filter did not need another pattern because query strings do not change the URL path. The same pattern works when genre or rating filters are applied. This keeps the Books navigation active throughout the books section.
-
-## Q4. Why delete the filter method but keep store and update?
-
-I deleted the old filter method because filtering is now handled by the index method using query strings. The store and update methods are standard resource controller actions for creating and updating books. I kept them empty because the assignment requires them to remain in the controller. Their routes are not registered, so they cannot be reached through those URLs.
+My pages still work because I kept the same view names and continued passing the data the views need from `BookController`. I changed the controller to retrieve book records using the `Book` model and Eloquent instead of reading them from a JSON file.

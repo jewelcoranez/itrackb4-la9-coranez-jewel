@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,9 +10,15 @@
 
     <div class="container mt-4">
 
-        <h1>Logi book library </h1>
+        <h1>Logi book library</h1>
 
         @include('partials._nav')
+
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
         @yield('content')
 
@@ -21,3 +28,4 @@
 
 </body>
 </html>
+

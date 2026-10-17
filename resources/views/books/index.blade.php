@@ -6,7 +6,11 @@
 
     <h2 class="mt-4">BOOK LIST</h2>
 
-    
+    <a href="{{ route('books.create') }}"
+       class="btn btn-primary mb-3">
+        Add Book
+    </a>
+
     <div class="alert alert-info">
         <strong>Active Filters:</strong>
 
@@ -23,8 +27,7 @@
         @endif
     </div>
 
-    
-    <h5>Filter by Genre</h5>
+    <h5>Genre</h5>
 
     @foreach (['Adventure', 'Fantasy', 'Classic', 'Romance', 'Drama'] as $item)
         <a href="{{ route('books.index', [
@@ -38,8 +41,7 @@
 
     <hr>
 
-    
-    <h5>Filter by Rating</h5>
+    <h5>Rating</h5>
 
     @foreach ([5.0, 6.7, 8.7, 8.8, 9.6, 9.9] as $item)
         <a href="{{ route('books.index', [
@@ -53,7 +55,6 @@
 
     <hr>
 
-    
     <a href="{{ route('books.index') }}"
        class="btn btn-secondary btn-sm mb-3">
         Clear All Filters
