@@ -1,8 +1,11 @@
+
 @extends('layouts.app')
 
 @section('title', 'Books')
 
 @section('content')
+
+<div class="container mt-4">
 
     <h2 class="mt-4">BOOK LIST</h2>
 
@@ -12,44 +15,21 @@
     </a>
 
     <div class="alert alert-info">
-        <strong>Active Filters:</strong>
+        <strong>Active Filter:</strong>
 
-        @if ($genre !== '' || $rating !== '')
-            @if ($genre !== '')
-                Genre: {{ $genre }}
-            @endif
-
-            @if ($rating !== '')
-                | Rating: {{ $rating }}
-            @endif
+        @if ($author !== '')
+            Author ID: {{ $author }}
         @else
             None
         @endif
     </div>
 
-    <h5>Genre</h5>
+    <h5>Author</h5>
 
-    @foreach (['Adventure', 'Fantasy', 'Classic', 'Romance', 'Drama'] as $item)
-        <a href="{{ route('books.index', [
-            'genre' => $item,
-            'rating' => $rating
-        ]) }}"
+    @foreach ($authors as $item)
+        <a href="{{ route('books.index', ['author' => $item->id]) }}"
            class="btn btn-outline-primary btn-sm mb-2">
-            {{ $item }}
-        </a>
-    @endforeach
-
-    <hr>
-
-    <h5>Rating</h5>
-
-    @foreach ([5.0, 6.7, 8.7, 8.8, 9.6, 9.9] as $item)
-        <a href="{{ route('books.index', [
-            'genre' => $genre,
-            'rating' => $item
-        ]) }}"
-           class="btn btn-outline-success btn-sm mb-2">
-            {{ $item }}
+            {{ $item->name }}
         </a>
     @endforeach
 
@@ -57,7 +37,7 @@
 
     <a href="{{ route('books.index') }}"
        class="btn btn-secondary btn-sm mb-3">
-        Clear All Filters
+        Clear Filter
     </a>
 
     <table class="table table-striped table-bordered">
@@ -66,8 +46,9 @@
             <tr>
                 <th>#</th>
                 <th>Title</th>
-                <th>Genre</th>
-                <th>Rating</th>
+                <th>Author</th>
+                <th>Pages</th>
+                <th>Availability</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -76,12 +57,14 @@
             @forelse ($books as $book)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $book['title'] }}</td>
-                    <td>{{ $book['genre'] }}</td>
-                    <td>{{ $book['rating'] }}</td>
-
+                    <td>{{ $book->title }}</td>
+                    <td>{{ $book->author->name ?? 'No Author' }}</td>
+                    <td>{{ $book->pages }}</td>
                     <td>
-                        <a href="{{ route('books.show', $book['id']) }}"
+                        {{ $book->is_available ? 'Available' : 'Not Available' }}
+                    </td>
+                    <td>
+                        <a href="{{ route('books.show', $book->id) }}"
                            class="btn btn-primary btn-sm">
                             VIEW DETAILS
                         </a>
@@ -89,13 +72,14 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">
-                        NO BOOKS MATCH THE SELECTED FILTER.
-                    </td>
+                    <td colspan="6">NO BOOKS FOUND.</td>
                 </tr>
             @endforelse
+
         </tbody>
 
     </table>
+
+</div>
 
 @endsection

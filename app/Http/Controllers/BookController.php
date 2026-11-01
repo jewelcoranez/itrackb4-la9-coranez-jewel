@@ -1,14 +1,18 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Book;
+use App\Models\Author;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
- public function create()
+    public function create()
     {
-        return view('books.create');
+        $authors = Author::all();
+
+        return view('books.create', compact('authors'));
     }
 
     public function store(Request $request)
@@ -17,7 +21,7 @@ class BookController extends Controller
             'title' => 'required|string|max:255',
             'pages' => 'required|integer|min:1',
             'is_available' => 'required|boolean',
-            'author' => 'nullable|string|max:255',
+            'author_id' => 'required|exists:authors,id',
         ]);
 
         Book::create($validated);
@@ -29,28 +33,35 @@ class BookController extends Controller
 
     public function show(string $id)
     {
-        $book = Book::findOrFail($id);
+        $book = Book::with('author')->findOrFail($id);
 
         return view('books.show', compact('book'));
     }
 
     public function index(Request $request)
     {
-        $genre = $request->query('genre', '');
-        $rating = $request->query('rating', '');
+        $author = $request->query('author', '');
 
-        $books = Book::all();
+        $query = Book::with('author');
+
+        if ($author !== '') {
+            $query->where('author_id', $author);
+        }
+
+        $books = $query->get();
+        $authors = Author::all();
 
         return view('books.index', compact(
             'books',
-            'genre',
-            'rating'
+            'authors',
+            'author'
         ));
     }
 
     public function featured()
     {
-        $books = Book::where('is_available', true)
+        $books = Book::with('author')
+            ->where('is_available', true)
             ->latest()
             ->take(3)
             ->get();
